@@ -22,10 +22,10 @@ public class ServerUtil {
 		scan.close();
 	}
 	
-	public Connection getConnection() throws SQLException, ClassNotFoundException {
+	public Connection getConnection() throws ClassNotFoundException, SQLException {
 		Class.forName(driver);
-		
 		Connection conn = DriverManager.getConnection(url, username, password);
+		conn.setAutoCommit(Boolean.FALSE);
 		return conn;
 	}
 
