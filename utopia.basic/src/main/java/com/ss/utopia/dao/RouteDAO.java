@@ -13,7 +13,7 @@ public class RouteDAO extends BaseDAO<Route> {
 
 	public RouteDAO(Connection conn) {
 		super(conn);
-	}
+	} 
 
 	@Override
 	public List<Route> extractData(ResultSet rs) throws SQLException {

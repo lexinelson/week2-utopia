@@ -12,7 +12,7 @@ public abstract class BaseDAO<T> {
 
 	public BaseDAO(Connection conn) {
 		this.conn = conn;
-	}
+	}  
 	
 	public PreparedStatement prepare(String sql, Object[] vals) 
 			throws SQLException {

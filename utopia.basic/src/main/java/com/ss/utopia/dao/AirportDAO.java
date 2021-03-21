@@ -12,7 +12,7 @@ public class AirportDAO extends BaseDAO<Airport> {
 
 	public AirportDAO(Connection conn) {
 		super(conn);
-	}
+	} 
 
 	@Override
 	public List<Airport> extractData(ResultSet rs) throws SQLException {
