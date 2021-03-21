@@ -85,7 +85,4 @@ public class SeatSection {
 			return false;
 		return true;
 	}
-	
-	
-	
 }
