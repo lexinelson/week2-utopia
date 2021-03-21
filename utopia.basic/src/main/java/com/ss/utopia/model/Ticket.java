@@ -1,19 +1,24 @@
 package com.ss.utopia.model;
 
+import java.util.List;
+
 public class Ticket {
 	
-	private SeatSection ticket;
+	private Integer id;
+	private List<SeatSection> ticket;
+	private String confirmation;
 	private Passenger passenger;
+	
 	/**
 	 * @return the ticket
 	 */
-	public SeatSection getTicket() {
+	public List<SeatSection> getTicket() {
 		return ticket;
 	}
 	/**
 	 * @param ticket the ticket to set
 	 */
-	public void setTicket(SeatSection ticket) {
+	public void setTicket(List<SeatSection> ticket) {
 		this.ticket = ticket;
 	}
 	/**
@@ -28,12 +33,23 @@ public class Ticket {
 	public void setPassenger(Passenger passenger) {
 		this.passenger = passenger;
 	}
+	/**
+	 * @return the confirmation
+	 */
+	public String getConfirmation() {
+		return confirmation;
+	}
+	/**
+	 * @param confirmation the confirmation to set
+	 */
+	public void setConfirmation(String confirmation) {
+		this.confirmation = confirmation;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((passenger == null) ? 0 : passenger.hashCode());
-		result = prime * result + ((ticket == null) ? 0 : ticket.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 	@Override
@@ -45,17 +61,11 @@ public class Ticket {
 		if (getClass() != obj.getClass())
 			return false;
 		Ticket other = (Ticket) obj;
-		if (passenger == null) {
-			if (other.passenger != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!passenger.equals(other.passenger))
-			return false;
-		if (ticket == null) {
-			if (other.ticket != null)
-				return false;
-		} else if (!ticket.equals(other.ticket))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}
-
 }

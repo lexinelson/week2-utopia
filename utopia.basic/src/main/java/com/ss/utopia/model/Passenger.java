@@ -7,6 +7,7 @@ public class Passenger {
 	private Integer id;
 	private String name;
 	private List<Ticket> trips;
+	
 	/**
 	 * @return the id
 	 */
