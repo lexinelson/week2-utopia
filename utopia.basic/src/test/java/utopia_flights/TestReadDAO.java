@@ -20,16 +20,16 @@ import com.ss.utopia.model.Airport;
 import com.ss.utopia.model.Flight;
 import com.ss.utopia.model.Route;
 import com.ss.utopia.model.Ticket;
-import com.ss.utopia.service.ServerUtil;
+import com.ss.utopia.service.Util;
 
 public class TestReadDAO {
 
-	private ServerUtil test;
+	private Util test;
 	
 	@Test
 	public void connectionTest() throws ClassNotFoundException, SQLException {
 		try {
-			test = new ServerUtil();
+			test = new Util();
 		} catch (FileNotFoundException e) {
 			assertTrue(false);
 		}
@@ -43,7 +43,7 @@ public class TestReadDAO {
 	
 	@Test
 	public void airportDAOTest() throws SQLException, ClassNotFoundException, FileNotFoundException {
-		test = new ServerUtil();
+		test = new Util();
 		AirportDAO tester = new AirportDAO(test.getConnection());
 		Airport expected = new Airport();
 		expected.setCode("SAC");
@@ -54,7 +54,7 @@ public class TestReadDAO {
 	
 	@Test
 	public void routeDAOTest() throws SQLException, ClassNotFoundException, FileNotFoundException {
-		test = new ServerUtil();
+		test = new Util();
 		RouteDAO tester = new RouteDAO(test.getConnection());
 		Route result = tester.readRouteByID(1);
 		assertEquals("Sacramento", result.getOrigin().getCity());
@@ -63,7 +63,7 @@ public class TestReadDAO {
 	
 	@Test
 	public void ticketDAOTest() throws SQLException, ClassNotFoundException, FileNotFoundException {
-		test = new ServerUtil();
+		test = new Util();
 		TicketDAO tester = new TicketDAO(test.getConnection());
 		List<Ticket> result = tester.readTicketsById(1);
 	//	assertEquals(2, result.size());
@@ -75,7 +75,7 @@ public class TestReadDAO {
 	
 	@Test
 	public void FlightDAOTest() throws SQLException, ClassNotFoundException, FileNotFoundException {
-		test = new ServerUtil();
+		test = new Util();
 		FlightDAO tester = new FlightDAO(test.getConnection());
 		Route testRoute = new Route();
 		testRoute.setId(3);

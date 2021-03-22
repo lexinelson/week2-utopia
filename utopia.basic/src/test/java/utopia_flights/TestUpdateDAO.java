@@ -20,15 +20,15 @@ import com.ss.utopia.model.Airport;
 import com.ss.utopia.model.Flight;
 import com.ss.utopia.model.Route;
 import com.ss.utopia.model.Ticket;
-import com.ss.utopia.service.ServerUtil;
+import com.ss.utopia.service.Util;
 
 public class TestUpdateDAO {
-	private ServerUtil util;
+	private Util util;
 	private Connection conn = null;
 	
 	@Test
 	public void testAirportDAO() throws ClassNotFoundException, SQLException, FileNotFoundException {
-		util = new ServerUtil();
+		util = new Util();
 		conn = util.getConnection();
 		AirportDAO test;
 		Airport sample;
@@ -54,7 +54,7 @@ public class TestUpdateDAO {
 	
 	@Test
 	public void testRouteDAO() throws ClassNotFoundException, SQLException, FileNotFoundException {
-		util = new ServerUtil();
+		util = new Util();
 		conn = util.getConnection();
 		RouteDAO test;
 		AirportDAO testHelp;
@@ -84,7 +84,7 @@ public class TestUpdateDAO {
 	
 	@Test
 	public void testTicketDAO() throws ClassNotFoundException, SQLException, FileNotFoundException {
-		util = new ServerUtil();
+		util = new Util();
 		conn = util.getConnection();
 		TicketDAO test;
 		Ticket sample;
@@ -112,7 +112,7 @@ public class TestUpdateDAO {
 				conn.close();
 		}
 		
-		util = new ServerUtil();
+		util = new Util();
 		conn = util.getConnection();
 		try {
 			
@@ -127,7 +127,7 @@ public class TestUpdateDAO {
 	
 	@Test
 	public void testFlightDAO() throws ClassNotFoundException, SQLException, FileNotFoundException {
-		util = new ServerUtil();
+		util = new Util();
 		conn = util.getConnection();
 		FlightDAO test;
 		RouteDAO testHelp;
