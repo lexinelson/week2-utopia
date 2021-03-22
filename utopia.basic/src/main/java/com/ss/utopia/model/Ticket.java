@@ -5,33 +5,22 @@ import java.util.List;
 public class Ticket {
 	
 	private Integer id;
-	private List<SeatSection> ticket;
+	private String seatClass;
+	private List<Flight> ticket;
 	private String confirmation;
-	private Passenger passenger;
+	private boolean isActive;
 	
 	/**
 	 * @return the ticket
 	 */
-	public List<SeatSection> getTicket() {
+	public List<Flight> getTicket() {
 		return ticket;
 	}
 	/**
 	 * @param ticket the ticket to set
 	 */
-	public void setTicket(List<SeatSection> ticket) {
+	public void setTicket(List<Flight> ticket) {
 		this.ticket = ticket;
-	}
-	/**
-	 * @return the passenger
-	 */
-	public Passenger getPassenger() {
-		return passenger;
-	}
-	/**
-	 * @param passenger the passenger to set
-	 */
-	public void setPassenger(Passenger passenger) {
-		this.passenger = passenger;
 	}
 	/**
 	 * @return the confirmation
@@ -44,6 +33,42 @@ public class Ticket {
 	 */
 	public void setConfirmation(String confirmation) {
 		this.confirmation = confirmation;
+	}
+	/**
+	 * @return the id
+	 */
+	public Integer getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	/**
+	 * @return the isActive
+	 */
+	public boolean isActive() {
+		return isActive;
+	}
+	/**
+	 * @param isActive the isActive to set
+	 */
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	/**
+	 * @return the seatClass
+	 */
+	public String getSeatClass() {
+		return seatClass;
+	}
+	/**
+	 * @param seatClass the seatClass to set
+	 */
+	public void setSeatClass(String seatClass) {
+		this.seatClass = seatClass;
 	}
 	@Override
 	public int hashCode() {

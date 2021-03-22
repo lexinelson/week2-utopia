@@ -36,8 +36,10 @@ public class AirportDAO extends BaseDAO<Airport> {
 	}
 	
 	public Airport readAirportByCode(String code) throws SQLException {
-		return read("Select * from airport where iata_id = ?",
-				new Object[] {code}).get(0);
+		List<Airport> airports = read("Select * from airport where iata_id = ?", new Object[] {code});
+		if (airports.size() > 0)
+			return airports.get(0);
+		else return null;
 	}
 
 	public void updateAirport(Airport airport) throws SQLException {

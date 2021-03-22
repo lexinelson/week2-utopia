@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ss.utopia.model.Airplane;
+import com.ss.utopia.model.Ticket;
 
 public class AirplaneDAO extends BaseDAO<Airplane> {
 
@@ -39,7 +40,11 @@ public class AirplaneDAO extends BaseDAO<Airplane> {
 	}
 	
 	public Airplane readPlaneByID(Integer id) throws SQLException {
-		return read("select * from airplane where id = ?", new Object[] {id}).get(0);
+		List<Airplane> planes = read("select * from airplane where id = ?", new Object[] {id});
+		if (planes.size() > 0)
+			return planes.get(0);
+		else
+			return null;
 	}
 	
 	public Integer updateCapacities(Integer capacity) throws SQLException {

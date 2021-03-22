@@ -48,7 +48,10 @@ public class RouteDAO extends BaseDAO<Route> {
 	}
 	
 	public Route readRouteByID(Integer id) throws SQLException {
-		return read("select * from route where id = ?", new Object[] {id}).get(0);
+		List<Route> routes = read("select * from route where id = ?", new Object[] {id});
+		if (routes.size() > 0)
+			return routes.get(0);
+		else return null;
 	}
 	
 	public void updateRoute(Route route) throws SQLException {
