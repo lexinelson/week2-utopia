@@ -78,7 +78,7 @@ public class TicketDAO extends BaseDAO<Ticket>{
 	}
 	
 	public void addNewTicket(Ticket ticket) throws SQLException {
-		if (readAllTickets().contains(ticket)) {
+		if (readAllTickets().contains(ticket) || ticket.getId() == null) {
 			Integer ticketId = getNextId();
 			ticket.setId(ticketId);
 		}
