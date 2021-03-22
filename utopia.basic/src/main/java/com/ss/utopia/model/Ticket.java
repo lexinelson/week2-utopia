@@ -1,38 +1,26 @@
 package com.ss.utopia.model;
 
-import java.util.List;
-
 public class Ticket {
 	
 	private Integer id;
-	private String seatClass;
-	private List<Flight> ticket;
-	private String confirmation;
+	private Integer flightId;
+	private Integer seatId;
+	private Integer passengerId;
+	private String passengerName;
+	private String confirmationCode;
 	private boolean isActive;
 	
 	/**
-	 * @return the ticket
+	 * @return the passengerName
 	 */
-	public List<Flight> getTicket() {
-		return ticket;
+	public String getPassengerName() {
+		return passengerName;
 	}
 	/**
-	 * @param ticket the ticket to set
+	 * @param passengerName the passengerName to set
 	 */
-	public void setTicket(List<Flight> ticket) {
-		this.ticket = ticket;
-	}
-	/**
-	 * @return the confirmation
-	 */
-	public String getConfirmation() {
-		return confirmation;
-	}
-	/**
-	 * @param confirmation the confirmation to set
-	 */
-	public void setConfirmation(String confirmation) {
-		this.confirmation = confirmation;
+	public void setPassengerName(String passengerName) {
+		this.passengerName = passengerName;
 	}
 	/**
 	 * @return the id
@@ -47,6 +35,55 @@ public class Ticket {
 		this.id = id;
 	}
 	/**
+	 * @return the flightId
+	 */
+	public Integer getFlightId() {
+		return flightId;
+	}
+	/**
+	 * @param flightId the flightId to set
+	 */
+	public void setFlightId(Integer flightId) {
+		this.flightId = flightId;
+	}
+	/**
+	 * @return the seatId
+	 */
+	public Integer getSeatId() {
+		return seatId;
+	}
+	/**
+	 * @param seatId the seatId to set
+	 */
+	public void setSeatId(Integer seatId) {
+		this.seatId = seatId;
+	}
+	/**
+	 * @return the passengerId
+	 */
+	public Integer getPassengerId() {
+		return passengerId;
+	}
+	/**
+	 * @param passengerId the passengerId to set
+	 */
+	public void setPassengerId(Integer passengerId) {
+		this.passengerId = passengerId;
+	}
+	/**
+	 * @return the confirmationCode
+	 */
+	public String getConfirmationCode() {
+		return confirmationCode;
+	}
+	/**
+	 * @param confirmationCode the confirmationCode to set
+	 */
+	public void setConfirmationCode(String confirmationCode) {
+		this.confirmationCode = confirmationCode;
+	}
+	
+	/**
 	 * @return the isActive
 	 */
 	public boolean isActive() {
@@ -57,18 +94,6 @@ public class Ticket {
 	 */
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
-	}
-	/**
-	 * @return the seatClass
-	 */
-	public String getSeatClass() {
-		return seatClass;
-	}
-	/**
-	 * @param seatClass the seatClass to set
-	 */
-	public void setSeatClass(String seatClass) {
-		this.seatClass = seatClass;
 	}
 	@Override
 	public int hashCode() {

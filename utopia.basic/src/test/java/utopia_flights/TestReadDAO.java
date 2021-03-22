@@ -8,17 +8,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
-import com.ss.utopia.dao.AirplaneDAO;
 import com.ss.utopia.dao.AirportDAO;
 import com.ss.utopia.dao.FlightDAO;
 import com.ss.utopia.dao.RouteDAO;
 import com.ss.utopia.dao.TicketDAO;
-import com.ss.utopia.model.Airplane;
 import com.ss.utopia.model.Airport;
 import com.ss.utopia.model.Flight;
 import com.ss.utopia.model.Route;
@@ -50,7 +47,7 @@ public class TestReadDAO {
 		AirportDAO tester = new AirportDAO(test.getConnection());
 		Airport expected = new Airport();
 		expected.setCode("SAC");
-		Airport result = tester.readAirportByCode("SAC");
+		Airport result = tester.getAirportByCode("SAC");
 		assertEquals(expected, result);
 		assertEquals("Sacramento", result.getCity());
 	}
@@ -68,16 +65,12 @@ public class TestReadDAO {
 	public void ticketDAOTest() throws SQLException, ClassNotFoundException, FileNotFoundException {
 		test = new ServerUtil();
 		TicketDAO tester = new TicketDAO(test.getConnection());
-		Ticket result = tester.readTicketById(1);
-		assertEquals("ABCDEF12345", result.getConfirmation());
-		List<Flight> expectedFlights = new ArrayList<Flight>();
-		Flight flight5 = new Flight();
-		Flight flight9 = new Flight();
-		flight5.setId(5);
-		flight9.setId(9);
-		expectedFlights.add(flight5);
-		expectedFlights.add(flight9);
-		assertEquals(expectedFlights, result.getTicket());
+		List<Ticket> result = tester.readTicketsById(1);
+	//	assertEquals(2, result.size());
+		result = tester.readTicketsByFlightId(3);
+	//	assertEquals(3, result.size());
+		result = tester.readTicketsByPassengerId(9);
+		assertEquals(2, result.size());
 	}
 	
 	@Test
@@ -85,11 +78,9 @@ public class TestReadDAO {
 		test = new ServerUtil();
 		FlightDAO tester = new FlightDAO(test.getConnection());
 		Route testRoute = new Route();
-		Airplane testPlane = new Airplane();
 		testRoute.setId(3);
-		testPlane.setId(5);
 		Flight result = tester.readFlightById(1);
 		assertEquals(testRoute, result.getRoute());
-		assertEquals(testPlane, result.getPlane());
+		assertEquals(10, tester.readAllFlights().size());
 	}
 }

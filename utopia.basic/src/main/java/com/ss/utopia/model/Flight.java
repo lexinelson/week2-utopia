@@ -10,7 +10,7 @@ public class Flight {
 	private Route route;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
-	private List<SeatSection> seats;
+	private Integer[] seats;
 	
 	/**
 	 * @return the id
@@ -75,15 +75,16 @@ public class Flight {
 	/**
 	 * @return the seats
 	 */
-	public List<SeatSection> getSeats() {
+	public Integer[] getSeats() {
 		return seats;
 	}
 	/**
 	 * @param seats the seats to set
 	 */
-	public void setSeats(List<SeatSection> seats) {
+	public void setSeats(Integer[] seats) {
 		this.seats = seats;
 	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

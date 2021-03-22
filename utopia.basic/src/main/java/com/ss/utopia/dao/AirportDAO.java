@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ss.utopia.model.Airport;
+import com.ss.utopia.model.Route;
 
 public class AirportDAO extends BaseDAO<Airport> {
 
@@ -35,7 +36,7 @@ public class AirportDAO extends BaseDAO<Airport> {
 		return read("select * from airport", new Object[] {});
 	}
 	
-	public Airport readAirportByCode(String code) throws SQLException {
+	public Airport getAirportByCode(String code) throws SQLException {
 		List<Airport> airports = read("Select * from airport where iata_id = ?", new Object[] {code});
 		if (airports.size() > 0)
 			return airports.get(0);
@@ -48,7 +49,6 @@ public class AirportDAO extends BaseDAO<Airport> {
 	}
 	
 	public void deleteAirport(Airport airport) throws SQLException {
-		
 		save("delete from airport where iata_id = ?",
 				new Object[] {airport.getCode()});
 	}

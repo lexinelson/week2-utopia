@@ -3,6 +3,7 @@ package com.ss.utopia.dao;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,116 +19,89 @@ public class TicketDAO extends BaseDAO<Ticket>{
 	@Override
 	public List<Ticket> extractData(ResultSet rs) throws SQLException {
 		List<Ticket> tickets = new ArrayList<Ticket>();
-		FlightBookingsDAO ticketFlightReader = new FlightBookingsDAO(conn);
-		SeatClassDAO ticketSeatReader = new SeatClassDAO(conn);
 		
 		while (rs.next()) {
 			Ticket ticket = new Ticket();
-			ticket.setId(Integer.parseInt(rs.getString("id")));
-			ticket.setConfirmation(rs.getString("confirmation_code"));
-			ticket.setActive(Integer.parseInt(rs.getString("is_active")) > 0);
-			List<Flight> flights = ticketFlightReader.readFlightsByTicket(ticket.getId());
-			ticket.setTicket(new ArrayList<Flight>());
-			for (Flight flight : flights) {
-				List<Flight> runningFlights = ticket.getTicket();
-				runningFlights.add(flight);
-				ticket.setTicket(runningFlights);
-			}
-			ticket.setSeatClass(ticketSeatReader.readByTicketId(ticket.getId()));
+			ticket.setId(rs.getInt("id"));
+			ticket.setFlightId(rs.getInt("flight_id"));
+			ticket.setSeatId(rs.getInt("seat_id"));
+			ticket.setPassengerId(rs.getInt("p_id"));
+			ticket.setConfirmationCode(rs.getString("confirmation_code"));
+			ticket.setActive(rs.getInt("is_active") > 0);
+			ticket.setPassengerName(rs.getString("given_name") + " " + rs.getString("family_name"));
 			tickets.add(ticket);
 		}
-		
 		return tickets;
 	}
 
 	public List<Ticket> readAllTickets() throws SQLException {
-		return read("select * from booking", new Object[] {});
+		return read("select b.id, fb.flight_id, bs.seat_id, p.id as p_id, p.given_name, p.family_name,"
+				+ " b.confirmation_code, b.is_active "+
+				"from booking as b join flight_bookings as fb on b.id = fb.booking_id "+
+				"join booking_seats as bs on b.id = bs.booking_id "+
+				"join passenger as p on p.booking_id = b.id", new Object[] {});
 	}
 	
-	public Ticket readTicketById(Integer id) throws SQLException {
-		List<Ticket> tickets = read("select * from booking where id = ?", new Object[] {id});
-		if (tickets.size() > 0)
-			return tickets.get(0);
-		else
-			return null;
+	public List<Ticket> readTicketsById(Integer id) throws SQLException {
+		return read("select b.id, fb.flight_id, bs.seat_id, p.id as p_id, p.given_name, p.family_name, b.confirmation_code, b.is_active "+
+				"from booking as b join flight_bookings as fb on b.id = fb.booking_id "+
+				"join booking_seats as bs on b.id = bs.booking_id "+
+				"join passenger as p on p.booking_id = b.id where b.id = ?", new Object[] {id});
+	}
+	
+	public List<Ticket> readTicketsByFlightId(Integer id) throws SQLException {
+		return read("select b.id, fb.flight_id, bs.seat_id, p.id as p_id, p.given_name, p.family_name,"
+				+ " b.confirmation_code, b.is_active "+
+				"from booking as b join flight_bookings as fb on b.id = fb.booking_id "+
+				"join booking_seats as bs on b.id = bs.booking_id "+
+				"join passenger as p on p.booking_id = b.id where fb.flight_id = ?", new Object[] {id});
+	}
+	
+	public List<Ticket> readTicketsByPassengerId(Integer id) throws SQLException {
+		return read("select b.id, fb.flight_id, bs.seat_id, p.id as p_id, p.given_name, p.family_name,"
+				+ " b.confirmation_code, b.is_active "+
+				"from booking as b join flight_bookings as fb on b.id = fb.booking_id "+
+				"join booking_seats as bs on b.id = bs.booking_id "+
+				"join passenger as p on p.booking_id = b.id where p.id = ?", new Object[] {id});
+	}
+	
+	public List<Ticket> readInactiveTickets() throws SQLException {
+		return read("select b.id, fb.flight_id, bs.seat_id, p.id as p_id, p.given_name, p.family_name,"
+				+ " b.confirmation_code, b.is_active "+
+				"from booking as b join flight_bookings as fb on b.id = fb.booking_id "+
+				"join booking_seats as bs on b.id = bs.booking_id "+
+				"join passenger as p on p.booking_id = b.id where b.is_active = 0", new Object[] {});
 	}
 	
 	public Integer getNextId() throws SQLException {
 		return readAllTickets().size() + 1;
 	}
 	
-	public Integer addNewTicket(Ticket ticket) throws SQLException {
-		Integer ticketId = getNextId();
-		ticket.setId(ticketId);
-		save("insert into booking (confirmation_code) values (?)", new Object[] {ticket.getConfirmation()});
-		for (Flight flight : ticket.getTicket()) {
-			save("insert into flight_bookings values (?, ?)", new Object[] {ticket.getId(), flight.getId()});
+	public void addNewTicket(Ticket ticket) throws SQLException {
+		if (readAllTickets().contains(ticket)) {
+			Integer ticketId = getNextId();
+			ticket.setId(ticketId);
 		}
-		return ticketId;
+		Integer active = (ticket.isActive()) ? 1 : 0;
+		save("insert into booking values (?, ?, ?)", new Object[] {ticket.getId(), active, ticket.getConfirmationCode()});
+		save("insert into passenger values (?, ?, ?, ?, '1990-01-01', 'female', 'Somewhere')",
+				new Object[] {ticket.getPassengerId(), ticket.getId(), ticket.getPassengerName().split(" ")[0],
+						ticket.getPassengerName().split(" ")[1]});
+		save("insert into flight_bookings values (?, ?)", new Object[] {ticket.getFlightId(), ticket.getId()});
+		save("insert into booking_seats values (?, ?)", new Object[] {ticket.getId(), ticket.getSeatId()});
 	}
 	
 	public void updateTicket(Ticket ticket) throws SQLException {
-		save("delete from flight_bookings where booking_id = ?", new Object[] {ticket.getId()});
-		for (Flight flight : ticket.getTicket()) {
-			save("insert into flight_bookings values (?, ?)",
-					new Object[] {flight.getId(), ticket.getId()});
-		}
 		Integer active = (ticket.isActive()) ? 1 : 0;
-		save("update bookings set confirmation_code = ?, isActive = ?", 
-				new Object[] {ticket.getConfirmation(), active});
+		save("update booking set is_active = ? where id = ?", 
+				new Object[] {active, ticket.getId()});
+		save("update booking_seats set seat_id = ? where booking_id = ?",
+				new Object[] {ticket.getSeatId(), ticket.getId()});
+		save("update passenger set given_name = ?, family_name = ? where booking_id = ?",
+				new Object[] {ticket.getPassengerName().split(" ")[0], ticket.getPassengerName().split(" ")[1], ticket.getId()});
 	}
 	
 	public void deleteTicket(Ticket ticket) throws SQLException {
-		save("delete from flight_bookings where booking_id = ?", new Object[] {ticket.getId()});
 		save("delete from booking where id = ?", new Object[] {ticket.getId()});
-	}
-	
-	private class FlightBookingsDAO extends BaseDAO<Flight> {
-
-		public FlightBookingsDAO(Connection conn) {
-			super(conn);
-		}
-
-		@Override
-		public List<Flight> extractData(ResultSet rs) throws SQLException {
-			List<Flight> flights = new ArrayList<Flight>();
-			while (rs.next()) {
-				Flight flight = new Flight();
-				flight.setId(Integer.parseInt(rs.getString("flight_id")));
-				flights.add(flight);
-			}
-			return flights;
-		}
-		
-		public List<Flight> readFlightsByTicket(Integer ticketID) throws SQLException {
-			return read("select * from flight_bookings where booking_id = ?", new Object[] {ticketID});
-		}
-	}
-	
-	private class SeatClassDAO extends BaseDAO<String> {
-
-		public SeatClassDAO(Connection conn) {
-			super(conn);
-		}
-
-		@Override
-		public List<String> extractData(ResultSet rs) throws SQLException {
-			List<String> flightClass = new ArrayList<String>();
-			while (rs.next()) {
-				String seatClass = rs.getString("name");
-				flightClass.add(seatClass);
-			}
-			return flightClass;
-		}
-		
-		public String readByTicketId(Integer ticketId) throws SQLException {
-			System.out.println(ticketId);
-			List<String> result = read("select s.name from booking_seats as sb join seat_class as s where sb.booking_id = ? and sb.seat_id = s.id",
-					new Object[] {ticketId});
-			if (result != null)
-				return result.get(0);
-			else return null;
-		}
-		
 	}
 }
