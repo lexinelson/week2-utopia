@@ -121,8 +121,12 @@ public class TicketDAO extends BaseDAO<Ticket>{
 		}
 		
 		public String readByTicketId(Integer ticketId) throws SQLException {
-			return read("select s.name from booking_seats as sb join seat_class as s where sb.booking_id = ? and sb.seat_id = s.id",
-					new Object[] {ticketId}).get(0);
+			System.out.println(ticketId);
+			List<String> result = read("select s.name from booking_seats as sb join seat_class as s where sb.booking_id = ? and sb.seat_id = s.id",
+					new Object[] {ticketId});
+			if (result != null)
+				return result.get(0);
+			else return null;
 		}
 		
 	}

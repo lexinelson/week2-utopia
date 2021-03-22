@@ -32,7 +32,7 @@ public class AirportDAO extends BaseDAO<Airport> {
 	}
 	
 	public List<Airport> getAllAirports() throws SQLException {
-		return readAll("airport");
+		return read("select * from airport", new Object[] {});
 	}
 	
 	public Airport readAirportByCode(String code) throws SQLException {
@@ -48,6 +48,7 @@ public class AirportDAO extends BaseDAO<Airport> {
 	}
 	
 	public void deleteAirport(Airport airport) throws SQLException {
+		
 		save("delete from airport where iata_id = ?",
 				new Object[] {airport.getCode()});
 	}

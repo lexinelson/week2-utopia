@@ -6,7 +6,7 @@ import java.util.List;
 public class Flight {
 
 	private Integer id;
-	private Airplane plane;
+	private Integer maxCapacity;
 	private Route route;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
@@ -25,16 +25,16 @@ public class Flight {
 		this.id = id;
 	}
 	/**
-	 * @return the plane
+	 * @return the maxCapacity
 	 */
-	public Airplane getPlane() {
-		return plane;
+	public Integer getMaxCapacity() {
+		return maxCapacity;
 	}
 	/**
-	 * @param plane the plane to set
+	 * @param maxCapacity the maxCapacity to set
 	 */
-	public void setPlane(Airplane plane) {
-		this.plane = plane;
+	public void setMaxCapacity(Integer maxCapacity) {
+		this.maxCapacity = maxCapacity;
 	}
 	/**
 	 * @return the route

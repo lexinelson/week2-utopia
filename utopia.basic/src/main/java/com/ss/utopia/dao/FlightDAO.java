@@ -21,17 +21,20 @@ public class FlightDAO extends BaseDAO<Flight> {
 	public List<Flight> extractData(ResultSet rs) throws SQLException {
 		List<Flight> flights = new ArrayList<Flight>();
 		RouteDAO routeReader = new RouteDAO(conn);
-		AirplaneDAO planeReader = new AirplaneDAO(conn);
 		FlightSeatDAO sectionReader = new FlightSeatDAO(conn);
 		TicketDAO ticketReader = new TicketDAO(conn);
 		
 		while (rs.next()) {
 			Flight flight = new Flight();
 			flight.setId(Integer.parseInt(rs.getString("id")));
-			flight.setRoute(routeReader.readRouteByID(Integer.parseInt(rs.getString("route_id"))));
-			flight.setPlane(planeReader.readPlaneByID(Integer.parseInt(rs.getString("airplane_id"))));
+			flight.setRoute(routeReader.readRouteByID(rs.getInt("route_id")));
+			
+//			flight.setPlane(planeReader.readPlaneByID(Integer.parseInt(rs.getString("airplane_id"))));
+			flight.setMaxCapacity(rs.getInt("capacity"));
+			
 			flight.setStartTime(LocalDateTime.parse(rs.getString("departure_time").replace(" ", "T")));
 			flight.setEndTime(flight.getStartTime().plus(flight.getRoute().getDuration()));
+			
 			List<SeatSection> sections = sectionReader.findSectionsByFlightID(flight.getId());
 			for (SeatSection sec : sections) {
 				sec.setReserved(new ArrayList<Ticket>());
@@ -61,11 +64,15 @@ public class FlightDAO extends BaseDAO<Flight> {
 	}
 	
 	public List<Flight> readAllFlights() throws SQLException {
-		return read("select * from flight", new Object[] {});
+		return read("select f.id, f.route_id, t.max_capacity, f.departure_time"
+				+ " from flight as f join airplane as a on f.airplane_id = a.id "
+				+ "join airplane_type as t on a.type_id = t.id", new Object[] {});
 	}
 
 	public Flight readFlightById(Integer id) throws SQLException {
-		List<Flight> flights = read("select * from flight where id = ?", new Object[] {id});
+		List<Flight> flights = read("select f.id, f.route_id, t.max_capacity, f.departure_time"
+				+ " from flight as f join airplane as a on f.airplane_id = a.id "
+				+ "join airplane_type as t on a.type_id = t.id where f.id = ?", new Object[] {id});
 		if (flights.size() > 0)
 			return flights.get(0);
 		else
@@ -75,15 +82,19 @@ public class FlightDAO extends BaseDAO<Flight> {
 	public void deleteFlight(Flight flight) throws SQLException {
 		Object[] id = {flight.getId()};
 		save("delete from flight_seats where flight_id = ?", id);
-		save("update booking set is_active = 0 from booking as b join flight_bookings as fb where b.id = fb.booking_id and fb.flight_id = ?", id);
+		save("update booking as b join flight_bookings as fb on b.id = fb.booking_id and fb.flight_id = ? set is_active = 0", id);
 		save("delete from flight_bookings where flight_id = ?", id);
 		save("delete from flight where id = ?", id);
 	}
 	
 	public void updateFlight(Flight flight) throws SQLException {
 		save("delete from flight_bookings where flight_id = ?", new Object[] {flight.getId()});
-		save("update booking set is_active = 0 from booking as b join flight_bookings as fb where b.id = fb.booking_id and fb.flight_id = ?",
+		save("update booking as b join flight_bookings as fb"
+				+ "	on b.id = fb.booking_id"
+				+ " and fb.flight_id = ?"
+				+ " set b.is_active = 0;",
 				new Object[] {flight.getId()});
+		
 		Integer sum = 0;
 		for (SeatSection section : flight.getSeats()) {
 			for (Ticket ticket : section.getReserved()) {
@@ -98,7 +109,7 @@ public class FlightDAO extends BaseDAO<Flight> {
 				new Object[] {flight.getRoute().getId(), flight.getPlane().getId(), flight.getStartTime().toString().replace("T", " "), sum});
 	}
 	
-	private Integer addFlight(Flight flight) throws SQLException {
+	public Integer addFlight(Flight flight) throws SQLException {
 		flight.setId(getNextId());
 		int seatSum = 0;
 		for (SeatSection section : flight.getSeats()) {

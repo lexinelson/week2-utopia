@@ -25,7 +25,7 @@ import com.ss.utopia.model.Route;
 import com.ss.utopia.model.Ticket;
 import com.ss.utopia.service.ServerUtil;
 
-public class TestDAO {
+public class TestReadDAO {
 
 	private ServerUtil test;
 	
@@ -42,15 +42,6 @@ public class TestDAO {
 		ResultSet rs = testQuery.executeQuery();
 		rs.next();
 		assertEquals("Sacramento", rs.getString("city"));
-	}
-	
-	@Test
-	public void airplaneDAOTest() throws SQLException, ClassNotFoundException, FileNotFoundException {
-		test = new ServerUtil();
-		AirplaneDAO tester = new AirplaneDAO(test.getConnection());
-		Airplane plane = tester.readPlaneByID(1);
-		assertEquals((Integer) 1, plane.getId());
-		assertEquals((Integer) 125, plane.getMaxCapacity());
 	}
 	
 	@Test

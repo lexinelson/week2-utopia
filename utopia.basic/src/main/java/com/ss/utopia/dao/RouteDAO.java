@@ -33,7 +33,7 @@ public class RouteDAO extends BaseDAO<Route> {
 	}
 	
 	public Integer getNextID() throws SQLException {
-		return readAll("route").size() + 1;
+		return readAllRoutes().size() + 1;
 	}
 	
 	public void addRoute(Route route) throws SQLException {
@@ -44,7 +44,7 @@ public class RouteDAO extends BaseDAO<Route> {
 	}
 	
 	public List<Route> readAllRoutes() throws SQLException {
-		return readAll("route");
+		return read("select * from route order by id", new Object[] {});
 	}
 	
 	public Route readRouteByID(Integer id) throws SQLException {
@@ -86,6 +86,7 @@ public class RouteDAO extends BaseDAO<Route> {
 		}
 		
 		public Duration readDuration(Integer routeID) throws SQLException {
+			System.out.println(routeID);
 			return read("select hours from route_duration where route_id = ?",
 					new Object[] {routeID}).get(0);
 		}
