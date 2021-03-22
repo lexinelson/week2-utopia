@@ -56,6 +56,10 @@ public class FlightDAO extends BaseDAO<Flight> {
 		return flights;
 	}
 	
+	public Integer getNextId() throws SQLException {
+		return readAllFlights().size() + 1;
+	}
+	
 	public List<Flight> readAllFlights() throws SQLException {
 		return read("select * from flight", new Object[] {});
 	}
@@ -67,6 +71,44 @@ public class FlightDAO extends BaseDAO<Flight> {
 		else
 			return null;
 	}
+	
+	public void deleteFlight(Flight flight) throws SQLException {
+		Object[] id = {flight.getId()};
+		save("delete from flight_seats where flight_id = ?", id);
+		save("update booking set is_active = 0 from booking as b join flight_bookings as fb where b.id = fb.booking_id and fb.flight_id = ?", id);
+		save("delete from flight_bookings where flight_id = ?", id);
+		save("delete from flight where id = ?", id);
+	}
+	
+	public void updateFlight(Flight flight) throws SQLException {
+		save("delete from flight_bookings where flight_id = ?", new Object[] {flight.getId()});
+		save("update booking set is_active = 0 from booking as b join flight_bookings as fb where b.id = fb.booking_id and fb.flight_id = ?",
+				new Object[] {flight.getId()});
+		Integer sum = 0;
+		for (SeatSection section : flight.getSeats()) {
+			for (Ticket ticket : section.getReserved()) {
+				save("update booking set is_active = 1 from booking where id = ?", new Object[] {ticket.getId()});
+				save("insert into flight_bookings values (?, ?)", new Object[] {flight.getId(), ticket.getId()});
+			}
+			save("update flight_seats set capacity = ? from flight_seats join seat_class as s where flight_id = ? and s.name = ?",
+					new Object[] {section.getTotalSeats(), flight.getId(), section.getClassification()});
+			sum += section.getTotalSeats();
+		}
+		save("update flight set route_id = ?, airplane_id = ?, departure_time = ?, reserved_seats = ?",
+				new Object[] {flight.getRoute().getId(), flight.getPlane().getId(), flight.getStartTime().toString().replace("T", " "), sum});
+	}
+	
+	private Integer addFlight(Flight flight) throws SQLException {
+		flight.setId(getNextId());
+		int seatSum = 0;
+		for (SeatSection section : flight.getSeats()) {
+			seatSum += section.getTotalSeats();
+		}
+		save("insert into flight values (?, ?, ?, ?, ?, ?)", new Object[] {flight.getId(), flight.getRoute().getId(), flight.getPlane().getId(),
+				flight.getStartTime().toString().replace("T", " "), seatSum, 399.99});
+		return flight.getId();
+	}
+	
 	
 	private class FlightSeatDAO extends BaseDAO<SeatSection> {
 
