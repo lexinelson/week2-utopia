@@ -94,8 +94,19 @@ public class TicketDAO extends BaseDAO<Ticket>{
 		save("insert into flight_bookings values (?, ?)", new Object[] {ticket.getFlightId(), ticket.getId()});
 	}
 	
+	public void cancelBooking(Ticket ticket) throws SQLException {
+		save("delete from flight_bookings where booking_id = ? and flight_id = ?",
+				new Object[] {ticket.getId(), ticket.getFlightId()});
+	}
+	
 	public void updateTicket(Ticket ticket) throws SQLException {
-		Integer active = (ticket.isActive()) ? 1 : 0;
+		boolean hasFlight;
+		List<Ticket> tickets = readAllTickets();
+		Integer active;
+		if(tickets.contains(ticket))
+			active = 1;
+		else active = 0;
+		
 		save("update booking set is_active = ? where id = ?", 
 				new Object[] {active, ticket.getId()});
 		save("update booking_seats set seat_id = ? where booking_id = ?",

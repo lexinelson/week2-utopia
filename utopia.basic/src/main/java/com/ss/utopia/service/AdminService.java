@@ -202,16 +202,29 @@ public class AdminService {
 		return null;
 	}
 	
+	public void ticketCancellation(Ticket ticket) throws FileNotFoundException, SQLException {
+		TicketDAO dao;
+		util = new Util();
+		try {
+			conn = util.getConnection();
+			dao = new TicketDAO(conn);
+			dao.cancelBooking(ticket);
+			conn.commit();
+		} catch (Exception e) {
+			System.out.println("Something went wrong cancelling the ticket.");
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+	}
+	
 	public void addFlightToTicket(Ticket ticket) throws FileNotFoundException, SQLException {
 		TicketDAO dao;
 		util = new Util();
 		try {
 			conn = util.getConnection();
-			System.out.println("Connection good");
 			dao = new TicketDAO(conn);
-			System.out.println("dao is good");
 			dao.bookNewFlight(ticket);
-			System.out.println("booking went perfect");
 			conn.commit();
 		} catch (Exception e) {
 			System.out.println("Something went wrong adding the flight.");

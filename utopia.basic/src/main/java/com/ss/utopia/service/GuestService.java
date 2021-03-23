@@ -32,10 +32,11 @@ public class GuestService {
 	}
 	
 	public List<Flight> getBookedFlights(Ticket ticket) throws FileNotFoundException, SQLException {
-		List<Flight> flights = privelage.readFlights();
-		for (Flight flight : flights) {
-			if (!ticket.getFlightId().equals(flight.getId()))
-				flights.remove(flight);
+		List<Flight> flights = new ArrayList<Flight>();
+		List<Ticket> tickets = privelage.readTickets();
+		for (int i = 0; i < tickets.size(); i++) {
+			if (ticket.getId().equals(tickets.get(i).getId()))
+				flights.add(privelage.flightById(tickets.get(i).getFlightId()));
 		}
 		return flights;
 	}
@@ -47,10 +48,10 @@ public class GuestService {
 	
 	public List<Flight> getPossibleFlights(Ticket ticket) throws FileNotFoundException, SQLException {
 		List<Flight> flights = privelage.readFlights();
-		for (int i = 0; i < flights.size(); i++) {
-			Flight flight = flights.get(i);
-			if (ticket.getFlightId().equals(flight.getId()))
-				flights.remove(i);
+		List<Ticket> tickets = privelage.readTickets();
+		for (int i = 0; i < tickets.size(); i++) {
+			if (ticket.getId().equals(tickets.get(i).getId()))
+				flights.remove(privelage.flightById(tickets.get(i).getFlightId()));
 		}
 		return flights;
 	}
@@ -60,8 +61,7 @@ public class GuestService {
 	}
 	
 	public void cancelTicket(Ticket ticket) throws FileNotFoundException, SQLException {
-		ticket.setActive(false);
-		privelage.updateTicket(ticket); 
+		privelage.ticketCancellation(ticket); 
 	}
 	
 	public void bookTicket(Flight flight, Ticket ticket)

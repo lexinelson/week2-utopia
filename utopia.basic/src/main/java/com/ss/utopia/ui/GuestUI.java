@@ -214,12 +214,78 @@ public class GuestUI {
 		}
 	}
 	
-	public void cancelMenu() {
-		System.out.println("cancel menu");
+	public void cancelMenu() throws FileNotFoundException, SQLException {
+		Ticket ticket = service.findTicket(ticketId);
+		List<Flight> flights = service.getBookedFlights(ticket);
+		List<String> flightsStr = service.viewBookedFlights(ticket);
+		
+		System.out.println("\n\n");
+		if(flightsStr != null) {
+			for (String flight : flightsStr) {
+				System.out.println(flight);
+			}
+		}
+		
+		Integer input = null;
+		System.out.print("Please enter the flight number for the ticket you'd like to cancel,\nor 'quit' to return to the menu: ");
+		String in=null;
+		try {
+			in = scan.next();
+			input = Integer.parseInt(in);
+			Flight f = service.fetchFlight(input);
+			Flight flight = (flights.contains(f)) ? f : null;
+			if (flight != null) {
+				cancelMenuTwo(flight);
+			}
+			else {
+				flightMenuError("cancel");
+			}
+		} catch (NumberFormatException e) {
+			if ("quit".equals(in))
+				menuOne();
+			else
+				flightMenuError("cancel");
+		}
 	}
 	
-	public void cancelMenuTwo(Flight flight) {
-		
+	public void cancelMenuTwo(Flight flight) throws FileNotFoundException, SQLException {
+		System.out.println("\n\nPlease ensure and confirm that you'd like to cancel this flight");
+		System.out.println("1) VIEW FLIGHT DETAILS");
+		System.out.println("2) Confirm cancellation");
+		System.out.println("3) Quit to previous");
+		Integer input = null;
+		boolean quit = false;
+		Integer seatClass = null;
+		try {
+			input = scan.nextInt();
+			scan.nextLine();
+			switch (input) {
+			case 1:
+				displayFlight(flight, "cancel");
+				return;
+			case 2:
+				seatClass = 1;
+				break;
+			case 3:
+				quit = true;
+				break;
+			default:
+				inputError();
+			}
+		} catch (Exception e) {
+			inputError();
+		} 
+		if (quit)
+			menuOne();
+		else if (input != 2) {
+			cancelMenuTwo(flight);
+		} else {
+			Ticket ticket = service.findTicket(ticketId);
+			ticket.setFlightId(flight.getId());
+			service.cancelTicket(ticket);
+			System.out.println("You're ticket has been cancelled.\n\n");
+			menuOne();
+		}
 	}
 
 }
