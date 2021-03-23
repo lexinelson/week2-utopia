@@ -22,7 +22,7 @@ public class AdminService {
 	public void addFlight(Flight flight) throws FileNotFoundException, SQLException {
 		FlightDAO dao;
 		util = new Util();
-		try {
+		try { 
 			conn = util.getConnection();
 			dao = new FlightDAO(conn);
 			dao.addFlight(flight);

@@ -13,7 +13,7 @@ public class Flight {
 	private Integer[] seats;
 	
 	/**
-	 * @return the id
+	 * @return the id 
 	 */
 	public Integer getId() {
 		return id;

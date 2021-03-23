@@ -15,7 +15,7 @@ public class EmployeeService {
 	private Util utility;
 	
 	public String displayFlight(Flight f) {
-		return utility.displayFlight(f);
+		return utility.displayFlight(f); 
 	}
 	
 	public String displayAirport(Airport a) {

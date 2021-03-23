@@ -54,8 +54,11 @@ public class Util {
 			case 3:
 				seatClass = "Economy";
 				break;
-			}
-			display.append(i + ") "+seatClass+" -> " + flight.getSeats()[i-1] + "\n");
+			} 
+			if (flight.getSeats()[i-1] != null)
+				display.append(i + ") "+seatClass+" -> " + flight.getSeats()[i-1] + "\n");
+			else
+				display.append(i + ") "+seatClass+" -> 0\n");
 		}
 		return display.toString();
 	}

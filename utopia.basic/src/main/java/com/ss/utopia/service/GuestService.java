@@ -16,7 +16,7 @@ public class GuestService {
 	public List<String> viewFlights() throws FileNotFoundException, SQLException {
 		utility = new Util();
 		List<Flight> flights = privelage.readFlights();
-		List<String> display = new ArrayList<String>();
+		List<String> display = new ArrayList<String>(); 
 		for (Flight flight : flights) {
 			display.add(flight.getId() + ") "+utility.displayRoute(flight.getRoute()));
 		}

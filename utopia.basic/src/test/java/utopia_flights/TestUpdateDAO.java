@@ -146,7 +146,7 @@ public class TestUpdateDAO {
 			test.updateFlight(expected);
 			assertEquals((Integer) 2, test.readFlightById(1).getRoute().getId());
 			test.updateFlight(sample);
-			assertEquals((Integer) 3, test.readFlightById(1).getRoute().getId());
+			assertEquals((Integer) 13, test.readFlightById(1).getRoute().getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			conn.rollback();

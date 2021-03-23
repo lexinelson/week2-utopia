@@ -5,8 +5,13 @@ import java.util.Scanner;
 public class HomeUI {
 	
 	private EmpUI emp;
-	private AdminUI admin;
+	private AdminUI admin; 
 	private GuestUI guest;
+	private Scanner scan;
+	
+	public HomeUI(Scanner scan) {
+		this.scan = scan;
+	}
 	
 	public void menu() {
 		System.out.println();
@@ -15,37 +20,40 @@ public class HomeUI {
 		System.out.println("1) Employee");
 		System.out.println("2) Admin");
 		System.out.println("3) Guest");
-		Scanner scan = new Scanner(System.in);
 		Integer input = null;
+		Boolean invalid = false;
 		try {
 			input = scan.nextInt();
 			switch (input) {
 			case 1:
 				emp = new EmpUI();
-				emp.menuOne();
+				emp.menuOne(scan);
 				break;
 			case 2:
 				admin = new AdminUI();
-				admin.menuOne();
+				admin.menuOne(scan);
 				break;
 			case 3:
 				guest = new GuestUI();
-				guest.menuOne();
+				guest.menuOne(scan);
 				break;
 			default:
 				errorMessage();
 			}
 		} catch (Exception e) {
 			errorMessage();
-		} finally {
-			scan.close();
+			scan.next();
 		}
+		menu();
+	}
+	
+	private void throwback() {
+		menu();
 	}
 	
 	private void errorMessage() {
 		System.out.println("\n\n");
 		System.out.println("Please enter the number corresponding to your status");
-		menu();
 	}
 
 }

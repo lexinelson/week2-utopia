@@ -78,7 +78,7 @@ public class TestReadDAO {
 		test = new Util();
 		FlightDAO tester = new FlightDAO(test.getConnection());
 		Route testRoute = new Route();
-		testRoute.setId(3);
+		testRoute.setId(13);
 		Flight result = tester.readFlightById(1);
 		assertEquals(testRoute, result.getRoute());
 		assertEquals(10, tester.readAllFlights().size());

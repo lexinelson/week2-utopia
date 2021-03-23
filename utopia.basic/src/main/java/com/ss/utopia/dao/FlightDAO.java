@@ -13,7 +13,7 @@ public class FlightDAO extends BaseDAO<Flight> {
 
 	public FlightDAO(Connection conn) {
 		super(conn);
-	}
+	} 
 
 	@Override
 	public List<Flight> extractData(ResultSet rs) throws SQLException {
