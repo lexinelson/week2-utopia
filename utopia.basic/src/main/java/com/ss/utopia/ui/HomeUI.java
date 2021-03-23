@@ -1,5 +1,7 @@
 package com.ss.utopia.ui;
 
+import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class HomeUI {
@@ -13,7 +15,7 @@ public class HomeUI {
 		this.scan = scan;
 	}
 	
-	public void menu() {
+	public void menu() throws FileNotFoundException, SQLException {
 		System.out.println();
 		System.out.println("Welcome to the Utopia Airlines Management System. "
 				+ "Which category of a user are you");
@@ -40,14 +42,10 @@ public class HomeUI {
 			default:
 				errorMessage();
 			}
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			errorMessage();
 			scan.next();
 		}
-		menu();
-	}
-	
-	private void throwback() {
 		menu();
 	}
 	

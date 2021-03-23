@@ -6,9 +6,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 import com.ss.utopia.model.Flight;
@@ -17,15 +15,14 @@ import com.ss.utopia.service.EmployeeService;
 public class EmpUI {
 	
 	private EmployeeService service = new EmployeeService();
-	private HomeUI home;
 	private Scanner scan;
 	
 	public void menuOneError() {
 		System.out.println("\n\n\n\n\n");
-		System.out.println("Please enter the number corresponding to what you'd like to do");
+		System.out.println("Please enter one of the given options");
 	}
 	
-	public void menuOne() {
+	public void menuOne() throws FileNotFoundException, SQLException {
 		System.out.println("\n\nWhat would you like to do?");
 		System.out.println("1) Enter flights you manage");
 		System.out.println("2) Quit to previous");
@@ -42,25 +39,29 @@ public class EmpUI {
 				menuOneError();
 			}
 		} catch (Exception e) {
-			menuOneError();
-			scan.next();
+			String text = scan.nextLine().toLowerCase();
+			if (text.contains("enter") || text.contains("flight"))
+				menuTwo();
+			else if (text.contains("quit"))
+				return;
+			else {
+				menuOneError();
+				scan.next();
+			}
 		}
 	}
 
-	public void menuOne(Scanner scanner) {
+	public void menuOne(Scanner scanner) throws FileNotFoundException, SQLException {
 		scan = scanner;
 		menuOne();
 	}
 	
-	public void menuTwo() {
+	public void menuTwo() throws FileNotFoundException, SQLException {
 		List<String> flights = null;
 		try {
 			flights = service.viewFlights();
-		} catch (FileNotFoundException e) {
-			System.out.println("Sorry, something seems to be wrong with the application");
-			menuOne();
 		} catch (SQLException e) {
-			System.out.println("Sorry, I can't seem to get the flights right now");
+			System.out.println("Sorry, there seems to be a problem fetching the flights");
 			menuOne();
 		}
 		
@@ -84,7 +85,7 @@ public class EmpUI {
 			else {
 				menuTwoError();
 			}
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			if ("quit".equals(in))
 				menuOne();
 			else
@@ -92,7 +93,7 @@ public class EmpUI {
 		}
 	}
 	
-	public void menuTwoError() {
+	public void menuTwoError() throws FileNotFoundException, SQLException {
 		System.out.println("\n\nNot a valid flight number, press enter to try again");
 		try {
 			System.in.read();
@@ -113,7 +114,7 @@ public class EmpUI {
 		}
 	}
 	
-	public void menuThree(Flight flight) {
+	public void menuThree(Flight flight) throws FileNotFoundException, SQLException {
 		System.out.println();
 		System.out.println("1) View more details about the flight");
 		System.out.println("2) Update details of the flight");
@@ -161,7 +162,7 @@ public class EmpUI {
 		}
 	}
 	
-	public void updateFlight(Flight flight) {
+	public void updateFlight(Flight flight) throws FileNotFoundException, SQLException {
 		Flight copy = flight;
 		System.out.println("You have chosen to update the flight with id: " + flight.getId() +
 				" and Origin: " + service.displayAirport(flight.getRoute().getOrigin()) +
@@ -224,15 +225,11 @@ public class EmpUI {
 			flight.setEndTime(LocalDateTime.of(flight.getEndTime().toLocalDate(), LocalTime.parse(input)));
 		}
 		
-		try {
-			service.updateFlight(flight);
-			System.out.println("Changes made were successful!");
-		} catch (Exception e) {
-			System.out.println("Something went wrong changing the flight. no changes were made");
-		}
+		service.updateFlight(flight);
+		System.out.println("Changes made were successful!");
 	}
 	
-	public void addSeats(Flight flight) {
+	public void addSeats(Flight flight) throws FileNotFoundException, SQLException {
 		System.out.println("Pick the Seat Class you want to add seats of, to your flight:");
 		System.out.println("1) First Class");
 		System.out.println("2) Business Class");
@@ -291,10 +288,6 @@ public class EmpUI {
 		if (newSeats != null) {
 			flight.getSeats()[seat-1] = newSeats;
 		}
-		try {
-			service.updateFlight(flight);
-		} catch (Exception e) {
-			System.out.println("Error: Something went wrong with the application build.");
-		}
+		service.updateFlight(flight);	
 	}
 }
