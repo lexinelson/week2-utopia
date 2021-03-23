@@ -99,6 +99,7 @@ public class Ticket {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((flightId == null) ? 0 : flightId.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -111,6 +112,11 @@ public class Ticket {
 		if (getClass() != obj.getClass())
 			return false;
 		Ticket other = (Ticket) obj;
+		if (flightId == null) {
+			if (other.flightId != null)
+				return false;
+		} else if (!flightId.equals(other.flightId))
+			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -118,4 +124,5 @@ public class Ticket {
 			return false;
 		return true;
 	}
+	
 }

@@ -56,7 +56,7 @@ public class TicketDAO extends BaseDAO<Ticket>{
 				"join booking_seats as bs on b.id = bs.booking_id "+
 				"join passenger as p on p.booking_id = b.id where fb.flight_id = ?", new Object[] {id});
 	}
-	
+	 
 	public List<Ticket> readTicketsByPassengerId(Integer id) throws SQLException {
 		return read("select b.id, fb.flight_id, bs.seat_id, p.id as p_id, p.given_name, p.family_name,"
 				+ " b.confirmation_code, b.is_active "+
@@ -78,9 +78,8 @@ public class TicketDAO extends BaseDAO<Ticket>{
 	}
 	
 	public void addNewTicket(Ticket ticket) throws SQLException {
-		if (readAllTickets().contains(ticket) || ticket.getId() == null) {
-			Integer ticketId = getNextId();
-			ticket.setId(ticketId);
+		if (ticket.getId() == null || readAllTickets().contains(ticket)) {
+			ticket.setId(getNextId());
 		}
 		Integer active = (ticket.isActive()) ? 1 : 0;
 		save("insert into booking values (?, ?, ?)", new Object[] {ticket.getId(), active, ticket.getConfirmationCode()});
@@ -89,6 +88,10 @@ public class TicketDAO extends BaseDAO<Ticket>{
 						ticket.getPassengerName().split(" ")[1]});
 		save("insert into flight_bookings values (?, ?)", new Object[] {ticket.getFlightId(), ticket.getId()});
 		save("insert into booking_seats values (?, ?)", new Object[] {ticket.getId(), ticket.getSeatId()});
+	}
+	
+	public void bookNewFlight(Ticket ticket) throws SQLException {
+		save("insert into flight_bookings values (?, ?)", new Object[] {ticket.getFlightId(), ticket.getId()});
 	}
 	
 	public void updateTicket(Ticket ticket) throws SQLException {

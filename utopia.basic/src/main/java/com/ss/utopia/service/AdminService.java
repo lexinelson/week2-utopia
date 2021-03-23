@@ -30,7 +30,7 @@ public class AdminService {
 		} catch (Exception e) {
 			System.out.println("Something went wrong adding the flight.");
 		} finally {
-			if (conn != null)
+			if (conn != null) 
 				conn.close();
 		}
 		
@@ -156,6 +156,15 @@ public class AdminService {
 		return tickets;
 	}
 	
+	public List<Ticket> readCancellations() throws FileNotFoundException, SQLException {
+		List<Ticket> tickets = readTickets();
+		for (Ticket ticket : tickets) {
+			if (ticket.isActive())
+				tickets.remove(ticket);
+		}
+		return tickets;
+	}
+	
 	public Flight flightById(Integer id) throws FileNotFoundException, SQLException {
 		List<Flight> flights = readFlights();
 		for (Flight flight : flights) {
@@ -191,6 +200,25 @@ public class AdminService {
 			}
 		}
 		return null;
+	}
+	
+	public void addFlightToTicket(Ticket ticket) throws FileNotFoundException, SQLException {
+		TicketDAO dao;
+		util = new Util();
+		try {
+			conn = util.getConnection();
+			System.out.println("Connection good");
+			dao = new TicketDAO(conn);
+			System.out.println("dao is good");
+			dao.bookNewFlight(ticket);
+			System.out.println("booking went perfect");
+			conn.commit();
+		} catch (Exception e) {
+			System.out.println("Something went wrong adding the flight.");
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
 	}
 	
 	public void updateFlight(Flight flight) throws FileNotFoundException, SQLException {

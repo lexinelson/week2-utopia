@@ -17,9 +17,10 @@ public class EmpUI {
 	private EmployeeService service = new EmployeeService();
 	private Scanner scan;
 	
-	public void menuOneError() {
-		System.out.println("\n\n\n\n\n");
+	public void menuOneError() throws FileNotFoundException, SQLException {
+		System.out.println("\n\n");
 		System.out.println("Please enter one of the given options");
+		menuOne();
 	}
 	
 	public void menuOne() throws FileNotFoundException, SQLException {
@@ -46,7 +47,6 @@ public class EmpUI {
 				return;
 			else {
 				menuOneError();
-				scan.next();
 			}
 		}
 	}
@@ -58,12 +58,8 @@ public class EmpUI {
 	
 	public void menuTwo() throws FileNotFoundException, SQLException {
 		List<String> flights = null;
-		try {
-			flights = service.viewFlights();
-		} catch (SQLException e) {
-			System.out.println("Sorry, there seems to be a problem fetching the flights");
-			menuOne();
-		}
+		flights = service.viewFlights();
+		
 		
 		System.out.println("\n\n");
 		if(flights != null) {
@@ -98,8 +94,9 @@ public class EmpUI {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Something is wrong with the console!");
+			System.out.println("Please restart the program and try again");
+			while (true) {}
 		}
 		menuTwo();
 	}
@@ -109,8 +106,9 @@ public class EmpUI {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Something is wrong with the console!");
+			System.out.println("Please restart the program and try again");
+			while (true) {}
 		}
 	}
 	
@@ -157,8 +155,9 @@ public class EmpUI {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Something is wrong with the console!");
+			System.out.println("Please restart the program and try again");
+			while (true) {}
 		}
 	}
 	
