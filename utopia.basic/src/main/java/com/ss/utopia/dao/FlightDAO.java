@@ -92,6 +92,7 @@ public class FlightDAO extends BaseDAO<Flight> {
 	}
 	
 	public void addFlight(Flight flight) throws SQLException {
+		flight.setId(getNextId());
 		save("insert into flight values (?, ?, 5, ?, 0, 400.00)",
 				new Object[] {flight.getId(), flight.getRoute().getId(), 
 						flight.getStartTime().toString().replace("T", " ")});

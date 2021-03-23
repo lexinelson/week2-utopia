@@ -3,6 +3,7 @@ package com.ss.utopia.service;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ss.utopia.dao.AirportDAO;
@@ -18,6 +19,37 @@ public class AdminService {
 	
 	private Util util;
 	private Connection conn=null;
+	
+	public List<String> view(Flight[] flights) throws FileNotFoundException, SQLException {
+		util = new Util();
+		List<String> display = new ArrayList<String>();
+		for (Flight flight : flights) {
+			display.add(flight.getId() + ") "+util.displayRoute(flight.getRoute()));
+		}
+		return display;
+	}
+	
+	public String displayFlight(Flight f) {
+		return util.displayFlight(f); 
+	} 
+	
+	public List<String> view(Airport[] airports) throws FileNotFoundException, SQLException {
+		util = new Util();
+		List<String> display = new ArrayList<String>();
+		for (Airport airport : airports) {
+			display.add(util.displayAirport(airport));
+		}
+		return display;
+	}
+	
+	public List<String> view(Ticket[] tickets) throws FileNotFoundException, SQLException {
+		util = new Util();
+		List<String> display = new ArrayList<String>();
+		for (Ticket ticket : tickets) {
+			display.add(ticket.getId() + ") "+util.displayTicket(ticket));
+		}
+		return display;
+	}
 	
 	public void addFlight(Flight flight) throws FileNotFoundException, SQLException {
 		FlightDAO dao;
@@ -179,6 +211,16 @@ public class AdminService {
 		for (Route route : routes) {
 			if (id.equals(route.getId()))
 				return route;
+		}
+		return null;
+	}
+	
+	public Route routeByAirports(Route route) throws FileNotFoundException, SQLException {
+		List<Route> routes = readRoutes();
+		for (Route r : routes) {
+			if (route.getDestination().getCode().equals(r.getDestination().getCode()) &&
+					route.getOrigin().getCode().equals(r.getOrigin().getCode()))
+				return r;
 		}
 		return null;
 	}

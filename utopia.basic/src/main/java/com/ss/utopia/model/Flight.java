@@ -1,5 +1,6 @@
 package com.ss.utopia.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -58,7 +59,16 @@ public class Flight {
 	 * @param startTime the startTime to set
 	 */
 	public void setStartTime(LocalDateTime startTime) {
-		this.startTime = startTime;
+		LocalDateTime entry;
+		if (startTime.isBefore(endTime))
+			entry = startTime;
+		else {
+			entry = endTime;
+			endTime = startTime;
+		}
+		
+		route.setDuration(Duration.between(entry, endTime));
+		this.startTime = entry;
 	}
 	/**
 	 * @return the endTime
@@ -70,7 +80,16 @@ public class Flight {
 	 * @param endTime the endTime to set
 	 */
 	public void setEndTime(LocalDateTime endTime) {
-		this.endTime = endTime;
+		LocalDateTime entry;
+		if (endTime.isAfter(startTime))
+			entry = endTime;
+		else {
+			entry = startTime;
+			startTime = endTime;
+		}
+		
+		route.setDuration(Duration.between(startTime, entry));
+		this.endTime = entry;
 	}
 	/**
 	 * @return the seats
