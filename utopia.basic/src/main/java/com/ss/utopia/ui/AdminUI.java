@@ -12,6 +12,7 @@ import java.util.Scanner;
 import com.ss.utopia.model.Airport;
 import com.ss.utopia.model.Flight;
 import com.ss.utopia.model.Route;
+import com.ss.utopia.model.Ticket;
 import com.ss.utopia.service.AdminService;
 import com.ss.utopia.service.Util;
 
@@ -396,8 +397,76 @@ public class AdminUI {
 		service.updateFlight(flight);	
 	}
 
-	public void ticketMenu() {
-
+	public void ticketMenu() throws FileNotFoundException, SQLException {
+		scan.nextLine();
+		System.out.println("What would you like to do in Tickets?");
+		System.out.println("1) Add New Ticket");
+		System.out.println("2) Delete a ticket");
+		System.out.println("3) Cancel a ticket");
+		String in = scan.nextLine();
+		Integer input=null;
+		try {
+			input = Integer.parseInt(in);
+		} catch (NumberFormatException e) {
+			String text = in.toString().toLowerCase();
+			if (text.contains("add"))
+				input = 1;
+			if (text.contains("delete"))
+				input = 2;
+			if (text.contains("cancel"))
+				input = 3;
+		}
+		switch(input) {
+		case 1:
+			Ticket t = new Ticket();
+			System.out.print("\nADDING TICKET\n");
+			System.out.print("Enter flight ID: ");
+			t.setFlightId(scan.nextInt());
+			scan.nextLine();
+			System.out.print("Enter Passenger ID: ");
+			t.setPassengerId(scan.nextInt());
+			scan.nextLine();
+			System.out.print("Enter Passenger Name: ");
+			String name = scan.nextLine();
+			if (!name.contains(" "))
+				name += " LastName";
+			System.out.print("Enter a unique confirmation code: ");
+			t.setConfirmationCode(scan.nextLine());
+			t.setActive(true);
+			service.addTicket(t);
+			break;
+		case 2:
+			Ticket ticket = selectTicket();
+			if (ticket == null) return;
+			service.deleteTicket(ticket);
+			break;
+		case 3:
+			Ticket tick = selectTicket();
+			if (tick == null) return;
+			service.ticketCancellation(tick);
+			break;
+		default:
+			System.out.println("Invalid input. Returning to main menu");
+			return;
+		}
+		
+	}
+	
+	public Ticket selectTicket() throws FileNotFoundException, SQLException {
+		List<Ticket> tickets = service.readTickets();
+		for (Ticket tick : tickets) {
+			System.out.println(tick.getId() + ") "+tick.getConfirmationCode()+" - "+tick.getPassengerName());
+		}
+		System.out.println("\nPlease make a selection by entering the confirmation code number, or 'quit' to return: ");
+		String input = scan.nextLine();
+		if (input.toLowerCase().contains("quit"))
+			return null;
+		Ticket ticket = service.ticketsByConfirmation(input);
+		if (ticket == null) {
+			System.out.println("Please enter only the confirmation number listed");
+			return selectTicket();
+		}
+		else return ticket;
 	}
 
 	public void airportMenu() {

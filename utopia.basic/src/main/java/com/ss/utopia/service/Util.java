@@ -72,6 +72,6 @@ public class Util {
 	}
 	
 	public String displayTicket(Ticket ticket) {
-		return ticket.getConfirmationCode() + ": " + ticket.getPassengerName();
+		return ticket.getId().toString() + ") "+ticket.getConfirmationCode() + " - " + ticket.getPassengerName();
 	}
 }

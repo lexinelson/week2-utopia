@@ -91,7 +91,15 @@ public class TicketDAO extends BaseDAO<Ticket>{
 	}
 	
 	public void bookNewFlight(Ticket ticket) throws SQLException {
-		save("insert into flight_bookings values (?, ?)", new Object[] {ticket.getFlightId(), ticket.getId()});
+		boolean passengerExists=false;
+		for (Ticket tick : readAllTickets()) {
+			if (ticket.getPassengerId().equals(tick.getPassengerId()))
+				passengerExists=true;
+		}
+		if (passengerExists)
+			save("insert into flight_bookings values (?, ?)", new Object[] {ticket.getFlightId(), ticket.getId()});
+		else
+			addNewTicket(ticket);
 	}
 	
 	public void cancelBooking(Ticket ticket) throws SQLException {

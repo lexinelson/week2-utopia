@@ -106,7 +106,7 @@ public class AdminService {
 		try {
 			conn = util.getConnection();
 			dao = new TicketDAO(conn);
-			dao.addNewTicket(ticket);
+			dao.bookNewFlight(ticket);
 			conn.commit();
 		} catch (Exception e) {
 			System.out.println("Something went wrong adding the ticket.");
