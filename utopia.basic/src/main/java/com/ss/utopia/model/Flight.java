@@ -59,8 +59,16 @@ public class Flight {
 	 * @param startTime the startTime to set
 	 */
 	public void setStartTime(LocalDateTime startTime) {
-		this.startTime = startTime;
-		route.setDuration(Duration.between(startTime, startTime));
+		if (endTime != null) {
+			if (endTime.isAfter(startTime))
+				this.startTime = startTime;
+			else {
+				this.startTime = endTime;
+				endTime = startTime;
+			}
+			route.setDuration(Duration.between(this.startTime, endTime));
+		} else
+			this.startTime = startTime;
 	}
 	/**
 	 * @return the endTime
@@ -72,8 +80,16 @@ public class Flight {
 	 * @param endTime the endTime to set
 	 */
 	public void setEndTime(LocalDateTime endTime) {
-		this.endTime = endTime;
-		route.setDuration(Duration.between(startTime, endTime));
+		if (startTime != null) {
+			if (endTime.isAfter(startTime))
+				this.endTime = endTime;
+			else {
+				this.endTime = startTime;
+				this.startTime = endTime;
+			}
+			route.setDuration(Duration.between(startTime, this.endTime));
+		} else
+			this.endTime = endTime;
 	}
 	/**
 	 * @return the seats

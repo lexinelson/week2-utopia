@@ -49,6 +49,7 @@ public class EmployeeService {
 		if (!routeExists) {
 			privelage.addRoute(flight.getRoute());
 		}
+		privelage.updateRoute(flight.getRoute());
 		privelage.updateFlight(flight);
 	}
 
