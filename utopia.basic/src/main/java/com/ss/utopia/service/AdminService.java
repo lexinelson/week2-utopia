@@ -189,12 +189,14 @@ public class AdminService {
 	}
 	
 	public List<Ticket> readCancellations() throws FileNotFoundException, SQLException {
-		List<Ticket> tickets = readTickets();
-		for (Ticket ticket : tickets) {
-			if (ticket.isActive())
-				tickets.remove(ticket);
+		List<Ticket> ticks = readTickets();
+		List<Ticket> tickets = ticks;
+		System.out.println(ticks.size());
+		for (int i = 0; i < tickets.size(); i++) {
+			if (tickets.get(i).isActive())
+				ticks.remove(i);
 		}
-		return tickets;
+		return ticks;
 	}
 	
 	public Flight flightById(Integer id) throws FileNotFoundException, SQLException {

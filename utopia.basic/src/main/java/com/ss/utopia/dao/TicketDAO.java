@@ -108,10 +108,8 @@ public class TicketDAO extends BaseDAO<Ticket>{
 	}
 	
 	public void updateTicket(Ticket ticket) throws SQLException {
-		boolean hasFlight;
-		List<Ticket> tickets = readAllTickets();
 		Integer active;
-		if(tickets.contains(ticket))
+		if (ticket.isActive())
 			active = 1;
 		else active = 0;
 		

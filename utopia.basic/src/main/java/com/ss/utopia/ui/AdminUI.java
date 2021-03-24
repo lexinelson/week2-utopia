@@ -594,14 +594,16 @@ public class AdminUI {
 		Ticket ticket = service.ticketsByConfirmation(input);
 		if (ticket == null) {
 			System.out.println("Please enter only the confirmation number listed");
-			return selectTicket();
+			return selectCancellation();
 		}
 		else return ticket;
 	}
 
 	public void cancelMenu() throws FileNotFoundException, SQLException {
+		scan.nextLine();
 		System.out.println("PLEASE SELECT A CANCELLATION TO OVERRIDE");
 		Ticket ticket = selectCancellation();
+		if (ticket == null) return;
 		System.out.println("Enter a flight id to book this ticket on: ");
 		Boolean isValid = true;
 		String input;
@@ -629,6 +631,7 @@ public class AdminUI {
 		ticket.setFlightId(id);
 		ticket.setActive(true);
 		System.out.println("Ticket successfully reactivated");
+		service.addFlightToTicket(ticket);
 		service.updateTicket(ticket);
 	}
 }
