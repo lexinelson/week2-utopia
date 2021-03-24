@@ -341,9 +341,9 @@ public class AdminUI {
 		System.out.println("2) Business Class");
 		System.out.println("3) Economy Class");
 		System.out.println("Enter quit at any time to cancel the operation");
-		
+
 		StringBuffer input = new StringBuffer();
-		
+
 		Integer seat = null;
 		Boolean valid = true;
 		do {
@@ -361,7 +361,7 @@ public class AdminUI {
 			}
 			input.delete(0, input.length());
 		} while (!valid);
-		
+
 		Integer newSeats=null;
 		do {
 			Integer current = flight.getSeats()[seat-1];
@@ -403,6 +403,7 @@ public class AdminUI {
 		System.out.println("1) Add New Ticket");
 		System.out.println("2) Delete a ticket");
 		System.out.println("3) Cancel a ticket");
+		System.out.println("4) View tickets");
 		String in = scan.nextLine();
 		Integer input=null;
 		try {
@@ -415,7 +416,10 @@ public class AdminUI {
 				input = 2;
 			if (text.contains("cancel"))
 				input = 3;
+			if (text.contains("view"))
+				input = 4;
 		}
+		boolean quit=true;
 		switch(input) {
 		case 1:
 			Ticket t = new Ticket();
@@ -445,15 +449,141 @@ public class AdminUI {
 			if (tick == null) return;
 			service.ticketCancellation(tick);
 			break;
+		case 4:
+			readTicket(true);
+			quit=false;
+			break;
 		default:
-			System.out.println("Invalid input. Returning to main menu");
+			System.out.println("Invalid input. Please try again\n");
+			quit=false;
 			return;
 		}
-		
+		if (quit) return;
+		else ticketMenu();
 	}
-	
-	public Ticket selectTicket() throws FileNotFoundException, SQLException {
+
+	public void readTicket(boolean justRead) throws FileNotFoundException, SQLException {
 		List<Ticket> tickets = service.readTickets();
+		for (Ticket tick : tickets) {
+			System.out.println(tick.getId() + ") "+tick.getConfirmationCode()+" - "+tick.getPassengerName());
+		}
+		if (justRead) {
+			System.out.println("Please press enter to return");
+			try {
+				System.in.read();
+			} catch (IOException e) {
+				System.out.println("Something is wrong with the console!");
+				System.out.println("Please restart the program and try again");
+				while (true) {}
+			}
+		}
+	}
+
+	public Ticket selectTicket() throws FileNotFoundException, SQLException {
+		readTicket(false);
+		System.out.println("\nPlease make a selection by entering the confirmation code number, or 'quit' to return: ");
+		String input = scan.nextLine();
+		if (input.toLowerCase().contains("quit"))
+			return null;
+		Ticket ticket = service.ticketsByConfirmation(input);
+		if (ticket == null) {
+			System.out.println("Please enter only the confirmation number listed");
+			return selectTicket();
+		}
+		else return ticket;
+	}
+
+	public void airportMenu() throws FileNotFoundException, SQLException {
+		scan.nextLine();
+		System.out.println("What would you like to do in Airports?");
+		System.out.println("1) Add New Airport");
+		System.out.println("2) Delete an airport");
+		System.out.println("3) Update an airport");
+		System.out.println("4) View airport");
+		String in = scan.nextLine();
+		Integer input=null;
+		try {
+			input = Integer.parseInt(in);
+		} catch (NumberFormatException e) {
+			String text = in.toString().toLowerCase();
+			if (text.contains("add"))
+				input = 1;
+			if (text.contains("delete"))
+				input = 2;
+			if (text.contains("update"))
+				input = 3;
+			if (text.contains("view"))
+				input = 4;
+		}
+		boolean quit=true;
+		switch(input) {
+		case 1:
+			Airport a = new Airport();
+			System.out.print("\nADDING AIRPORT\n");
+			System.out.print("Enter three Character Code (XXX): ");
+			a.setCode(scan.nextLine());
+			System.out.print("Enter the city name for this airport: ");
+			a.setCity(scan.nextLine());
+			service.addAirport(a);
+			break;
+		case 2:
+			Airport airport = selectAirport();
+			if (airport == null) return;
+			service.deleteAirport(airport);
+			break;
+		case 3:
+			Airport aport = selectAirport();
+			if (aport == null) return;
+			System.out.println("\nPlease enter the airports new city:");
+			aport.setCity(scan.nextLine());
+			service.updateAirport(aport);
+			break;
+		case 4:
+			readAirport(true);
+			quit=false;
+			break;
+		default:
+			System.out.println("Invalid input. Please try again\n");
+			quit=false;
+			return;
+		}
+		if (quit) return;
+		else airportMenu();
+	}
+
+	public void readAirport(boolean justRead) throws FileNotFoundException, SQLException {
+		List<Airport> airports = service.readAirports();
+		for (Airport a : airports) {
+			System.out.println(a.getCode() + " - " + a.getCity());
+		}
+		if(justRead) {
+			System.out.println("Please press enter to return");
+			try {
+				System.in.read();
+			} catch (IOException e) {
+				System.out.println("Something is wrong with the console!");
+				System.out.println("Please restart the program and try again");
+				while (true) {}
+			}
+		}
+	}
+
+	public Airport selectAirport() throws FileNotFoundException, SQLException {
+		readAirport(false);
+		System.out.println("\nPlease make a selection by entering the three letter code, or 'quit' to return:");
+		String input = scan.nextLine();
+		if (input.toLowerCase().contains("quit"))
+			return null;
+		Airport airport = service.airportByCode(input);
+		if (airport == null) {
+			System.out.println("Please enter only the confirmation number listed");
+			return selectAirport();
+		}
+		else return airport;
+	}
+
+	public Ticket selectCancellation() throws FileNotFoundException, SQLException {
+		List<Ticket> tickets = service.readCancellations();
 		for (Ticket tick : tickets) {
 			System.out.println(tick.getId() + ") "+tick.getConfirmationCode()+" - "+tick.getPassengerName());
 		}
@@ -469,11 +599,36 @@ public class AdminUI {
 		else return ticket;
 	}
 
-	public void airportMenu() {
-
-	}
-
-	public void cancelMenu() {
-
+	public void cancelMenu() throws FileNotFoundException, SQLException {
+		System.out.println("PLEASE SELECT A CANCELLATION TO OVERRIDE");
+		Ticket ticket = selectCancellation();
+		System.out.println("Enter a flight id to book this ticket on: ");
+		Boolean isValid = true;
+		String input;
+		Integer id=null;
+		do {
+			input = scan.nextLine();
+			try {
+				id = Integer.parseInt(input);
+				Flight flight = service.flightById(id);
+				if (flight != null)
+					isValid = true;
+				else {
+					System.out.println("Invalid input. Please try again or enter quit to go back");
+					isValid = false;
+				}
+			} catch (NumberFormatException e) {
+				if ("quit".equals(input))
+					return;
+				else {
+					System.out.println("Invalid input. Please try again or enter quit to go back");
+					isValid = false;
+				}
+			}
+		} while (!isValid);
+		ticket.setFlightId(id);
+		ticket.setActive(true);
+		System.out.println("Ticket successfully reactivated");
+		service.updateTicket(ticket);
 	}
 }
